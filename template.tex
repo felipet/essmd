@@ -1,0 +1,434 @@
+\documentclass[
+  a4paper,
+  twoside,
+  11pt,
+  lang=english
+]{article}
+
+\usepackage{amssymb,amsmath}
+\usepackage[left=2.2cm,right=2.2cm,top=3cm,bottom=3cm]{geometry}
+
+\providecommand{\tightlist}{%
+    \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Xetex.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage{ifxetex,ifluatex}
+\ifxetex
+  \usepackage{fontspec,xltxtra,xunicode}
+  \defaultfontfeatures{Mapping=tex-text,Scale=MatchLowercase}
+\else
+  \ifluatex
+    \usepackage{fontspec}
+    \defaultfontfeatures{Mapping=tex-text,Scale=MatchLowercase}
+  \else
+    \usepackage[utf8]{inputenc}
+  \fi
+\fi
+
+
+\ifxetex
+  \usepackage[setpagesize=false, % page size defined by xetex
+              unicode=false, % unicode breaks when used with xetex
+              xetex,
+              colorlinks=true,
+              urlcolor=blue,
+              anchorcolor=blue,
+              linkcolor=blue]{hyperref}
+\else
+  \usepackage[unicode=true,
+              colorlinks=true,
+              linkcolor=blue]{hyperref}
+\fi
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Generic
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage{url}
+\usepackage{calc}
+\hypersetup{breaklinks=true, pdfborder={0 0 0}}
+\usepackage{pbox}
+\usepackage{booktabs}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Environment for code formatting
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% Define the background (shade) color
+\usepackage{color}
+\definecolor{shadecolor}{RGB}{$bg-color$}
+\definecolor{darkgreen}{RGB}{0,125,0}
+\definecolor{darkred}{RGB}{170,0,0}
+\definecolor{turquoise}{RGB}{20,100,100}
+
+$if(listings)$
+\usepackage{fancyvrb, listings, color}
+\lstset{%
+	basicstyle=\small\ttfamily,
+	breaklines=true,
+	fancyvrb=true,
+	tabsize=2,
+	columns=fullflexible,
+	keywordstyle=\color{blue}\textbf,
+	identifierstyle=,
+	commentstyle=\color{darkgreen}\textit,
+	stringstyle=\color{red},
+	backgroundcolor=\color{shadecolor},
+  xleftmargin=10pt,
+  xrightmargin=10pt,
+  frame=shadowbox,
+}
+
+\lstdefinelanguage{sh}
+{
+	sensitive=true,
+	keywords={sudo,vi,systemctl},
+	alsoletter={\#,:,>},%
+	emph={>:\# ,>:$$},
+	moreemph={wrc\# ,wrc1\# ,wrc2\# , >spusa:\# ,>tornado:\# },
+	emphstyle=\color{darkred},
+	comment=[l]{\#\#},%
+	morestring=[s]{\{}{\}},
+	keywordstyle=\color{blue}\textbf,
+	commentstyle=\color{darkgreen}\textit,
+	stringstyle=\color{turquoise},
+	backgroundcolor=\color{shadecolor},
+  rulesep=10pt,
+}
+
+$endif$
+$if(lhs)$
+\lstnewenvironment{code}
+{}
+{}
+$endif$
+
+$if(bg-color)$
+% redefine env verbatim to be used to hold the code of any language.
+\usepackage{framed}
+\let\oldverbatim=\verbatim
+\renewenvironment{verbatim}
+{
+\begin{snugshade}
+\begin{oldverbatim}
+}
+{
+\end{oldverbatim}
+\end{snugshade}
+}
+
+% Redefined \textttt to add it background color
+\usepackage{soul, color, url}
+\sethlcolor{shadecolor}
+\let\OldTexttt\texttt
+\renewcommand{\texttt}[1]{\OldTexttt{\hl{#1}}}
+
+% Add highlighting environment (when background color)
+$if(highlighting-macros)$
+	$highlighting-macros$
+	\renewenvironment{Shaded}{
+	\begingroup
+    \fontsize{10pt}{12pt}\selectfont
+    \begin{snugshade}
+   	}
+   	{
+   		\end{snugshade}
+   		\endgroup
+   	}
+$endif$
+
+$else$
+	$if(highlighting-macros)$
+		% Add highlighting environment (without background color)
+		$highlighting-macros$
+	$endif$
+$endif$
+
+\usepackage{alltt}
+
+\let\oldquote=\quote
+\renewenvironment{quote}
+{
+\begingroup
+\sffamily %sans-serif font
+\slshape %slated (almost italic)
+\fontsize{10pt}{12pt}\selectfont
+}
+{
+\endgroup
+}
+
+
+$if(verbatim-in-note)$
+%\usepackage{fancyvrb}
+$endif$
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Graphics & Tables
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage{float} % provides the H option for float placement
+
+%% Tables
+$if(tables)$
+\usepackage{ctable}
+\usepackage{longtable}
+$endif$
+
+%% Images
+\usepackage{graphicx}
+
+$if(subscript)$
+\newcommand{\textsubscr}[1]{\ensuremath{_{\scriptsize\textrm{#1}}}}
+$endif$
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Lang (TODO: clean this, without breaking)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+$if(lang)$
+\ifxetex
+  \usepackage{polyglossia}
+  \newcommand{\euro}{€}
+  \setmainlanguage{$lang$}
+\else
+  \usepackage{babel}
+  \usepackage{eurosym}
+\fi
+$endif$
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% List
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\usepackage{enumitem}
+
+$if(fancy-enums)$
+% Redefine labelwidth for lists; otherwise, the enumerate package will
+% cause markers to extend beyond the left margin.
+\makeatletter\AtBeginDocument{%
+  \renewcommand{\@listi}
+    	{
+	\setlength{\labelwidth}{4em}
+	\leftmargin=25pt
+	\rightmargin=0pt
+	\labelsep=7pt
+	\labelwidth=20pt
+	\itemindent=0pt
+	\listparindent=0pt
+	\topsep=2pt plus 2pt minus 2pt
+	\partopsep=0pt plus 1pt minus 10pt
+	\parsep=1pt plus 1pt
+	\itemsep=\parsep
+	}
+}\makeatother
+\usepackage{enumerate}
+$endif$
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Chapters & Section
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% chapters
+\usepackage{titlesec}
+\titleformat{\chapter}[block]
+  {\normalfont\HUGE\bfseries}{\LARGE\thechapter.}{1ex}{}
+\titlespacing*{\chapter}{0pt}{-19pt}{0pt}
+
+
+% Sections
+$if(numbersections)$
+$else$
+\newpage
+\setcounter{secnumdepth}{0}
+$endif$
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Footer & Header
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+$if(verbatim-in-note)$
+ % allows verbatim text in footnotes
+$endif$
+
+
+\usepackage{fancyhdr}
+\fancyhf{}
+\fancyhead[R]{\nouppercase{\leftmark}}
+\fancyfoot[C]{\raisebox{-25pt}{\includegraphics[scale=.9]{./figs/ess_logo.png}}}
+\fancyfoot[R]{\raisebox{-1pt}{\thepage}}
+\pagestyle{fancy}                      % Sets fancy header and footer
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Bibliography
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+$if(natbib)$
+\usepackage{natbib}
+\bibliographystyle{plainnat}
+$endif$
+$if(biblatex)$
+\usepackage{biblatex}
+$if(biblio-files)$
+\bibliography{$biblio-files$}
+$endif$
+$endif$
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Title page
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+$if(title)$
+\newcommand{\mytitle}{$title$}
+$endif$
+$if(subtitle)$
+\newcommand{\mysubtitle}{$subtitle$}
+$endif$
+$if(author)$
+\newcommand{\myauthor}{$for(author)$$author$$sep$ \and $endfor$}
+$endif$
+$if(docnumber)$
+\newcommand{\mydocnumber}{$docnumber$}
+$endif$
+$if(revision)$
+\newcommand{\myrevision}{$revision$}
+$endif$
+$if(state)$
+\newcommand{\mystate}{$state$}
+$endif$
+$if(date)$
+\newcommand{\mydate}{$date$}
+$endif$
+$if(reviewer)$
+\newcommand{\myreviewer}{$reviewer$}
+$else$
+\newcommand{\myreviewer}{None}
+
+$endif$
+
+\makeatletter
+\def\thickhrulefill{\leavevmode \leaders \hrule height 1pt\hfill \kern \z@}
+\renewcommand{\maketitle}{\begin{titlepage}%
+    \let\footnotesize\small
+    \let\footnoterule\relax
+    \parindent \z@
+    \reset@font
+    \null\vfil
+    \begin{flushleft}
+      \Huge \textbf{\@title}
+    \end{flushleft}
+    \par
+    \hrule height 4pt
+    \par
+    \begin{flushright}
+      \large \@date \par
+    \end{flushright}
+    \vskip 500\p@
+    \vfil\null
+    \begin{flushleft}
+      \Large \textbf{\@author}
+    \end{flushleft}
+    \hrule height 2pt
+  \end{titlepage}%
+  \setcounter{footnote}{0}%
+}
+\makeatother
+
+%======================================================================%
+%======================================================================%
+
+\begin{document}
+
+$if(title)$
+\begin{titlepage}
+  \centering
+
+  \begin{minipage}[c]{0.3\textwidth}
+    \includegraphics[width=1.0\textwidth,angle=0]{./figs/ESS_Logo_Frugal_White-on-blue_cmyk.eps}
+  \end{minipage}
+  \begin{minipage}[c]{0.6\textwidth}
+    \flushright
+        {\small
+          \begin{tabular}{ll}
+            Document number & \mydocnumber \\
+            Date            & \mydate \\
+            Revision        & \myrevision \\
+            State           & \mystate \\
+          \end{tabular}
+        }
+  \end{minipage}
+  \vskip 8em
+  \noindent
+  \centering
+  \rule[0.5ex]{\linewidth}{2pt}\vspace*{-\baselineskip}\vspace*{3.2pt}
+  \rule[0.5ex]{\linewidth}{1pt}\\[\baselineskip]
+       {\Large \textbf{\mytitle}}\\[4mm]
+       {\large \textsc{\mysubtitle}}\\[4mm]
+  \rule[0.5ex]{\linewidth}{1pt}\vspace*{-\baselineskip}\vspace{3.2pt}
+  \rule[0.5ex]{\linewidth}{2pt}\\
+  \vskip 8em%
+  \vfill
+  \begin{center}
+    \begin{tabular}{l|p{0.7\linewidth}}
+      \toprule
+      &  Name (Role/Title) \\
+      \toprule
+      Author   & \myauthor    \\\midrule
+      Reviewer & \myreviewer  \\\midrule
+    \end{tabular}
+  \end{center}
+  \vfill
+\end{titlepage}
+$endif$
+
+$for(include-before)$
+$include-before$
+$endfor$
+
+$if(toc)$
+\setcounter{tocdepth}{2}
+\tableofcontents
+\clearpage
+$endif$
+
+$body$
+
+$if(natbib)$
+$if(biblio-files)$
+$if(biblio-title)$
+$if(book-class)$
+\renewcommand\bibname{$biblio-title$}
+$else$
+\renewcommand\refname{$biblio-title$}
+$endif$
+$endif$
+\bibliography{$biblio-files$}
+$endif$
+$endif$
+$if(biblatex)$
+\printbibliography$if(biblio-title)$[title=$biblio-title$]$endif$
+$endif$
+
+$for(include-after)$
+$include-after$
+$endfor$
+
+\end{document}

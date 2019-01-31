@@ -1,0 +1,6 @@
+title="Technical Manual"
+subtitle="A simple template to write in Markdown"
+author="Felipe Torres González (felipe.torresgonzalez<AT>esss.se)"
+docnumber="ESS-XXXXXX"
+revision=0.1
+state="Early Draft"
